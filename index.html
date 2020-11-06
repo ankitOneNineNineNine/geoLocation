@@ -5,27 +5,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .height>p {
+            display: inline-block
+        }
+
+        .heightDisplay {
+            display: none;
+        }
+
+        .runner {
+            display: none;
+
+        }
+    </style>
 </head>
 
 <body>
-    <h2 class='location'>YOUR JOURNEY</h2>
-    <button id='start'>Start the journey</button>
-    <button id='stop'>Stop the journey</button>
-    <h1>Start Location </h1>
-    <p id='lat'></p>
-    <p id='long'></p>
-    <h2>Current Location</h2>
-    <p id='clat'></p>
-    <p id='clong'></p>
-    <h2>Parameters</h2>
-    <p class='locDetails'>Distance = 0 Km</p>
-    <p class='speed'>Speed = 0 Kmph</p>
+    <div class='height'>
+        <h2>Your Gender</h2>
+        <input type='radio' name='Gender' value='Male'>Male
+        <input type='radio' name='Gender' value='Female'>Female
+        <input type='radio' name='Gender' value='Other'>Other
+        <h2>Your Height</h2>
+        <p>Feet: </p><input type='number' id='heightFeet' placeholder="feet" value='0' />
+        <p>Inches</p><input type='number' id='heightInch' placeholder="inch" value='0' />
+        <br />
+        <button id='submit'>Submit</button>
+    </div>
+    <div class='heightDisplay'>
+
+    </div>
+    <div class='runner'>
+
+        <h2 class=' location'>YOUR JOURNEY</h2>
+        <button id='start'>Start the journey</button>
+        <button id='stop'>Stop the journey</button>
+        <h1>Start Location </h1>
+        <p id='lat'></p>
+        <p id='long'></p>
+        <h2>Current Location</h2>
+        <p id='clat'></p>
+        <p id='clong'></p>
+        <h2>Parameters</h2>
+        <p class='locDetails'>Distance = 0 Km</p>
+        <p class='speed'>Speed = 0 Kmph</p>
+        <p class='steps'>Step = 0</p>
+        <p class='devA'></p>
+    </div>
     <script>
-        var time = 0;
-        var locs = [];
-        var watchId;
-        var timeInt;
+        let gender = document.querySelectorAll('input[name="Gender"]');
+        let heightFeet = document.getElementById('heightFeet');
+        let heightInch = document.getElementById('heightInch');
+        let runner = document.querySelector('.runner');
+        let heightDisplay = document.querySelector('.heightDisplay');
+        let height = document.querySelector('.height')
+        let submit = document.getElementById('submit')
+        let Feet = 0, Inch = 0
+        let strideLength = 0;
+        let time = 0;
+        let locs = [];
+        let watchId;
+        let timeInt;
+
+        heightFeet.onchange = () => {
+            Feet = heightFeet.value
+        }
+        heightInch.onchange = () => {
+            Inch = heightInch.value
+
+        }
+        submit.onclick = () => {
+
+            let selectedValue;
+            for (const rb of gender) {
+                if (rb.checked) {
+                    selectedValue = rb.value;
+                    break;
+                }
+            }
+            let heightInInches = (+Feet * 12) + (+Inch);
+            if (heightInInches < 48) {
+                alert('You have to be above 4 feet')
+            }
+            else if (!selectedValue) {
+                alert('Please select the gender')
+            }
+            else {
+                if (selectedValue === 'Male') {
+                    strideLength = heightInInches * .415;
+                }
+                else if (selectedValue === 'Female') {
+                    strideLength = heightInInches * .413;
+                }
+                else {
+                    strideLength = heightInInches * .415
+                }
+                heightDisplay.textContent = `Your height is ${Feet} feet and ${Inch} inches (${heightInInches} inches)`
+                heightDisplay.style.display = 'block'
+                runner.style.display = 'block'
+                height.style.display = 'none'
+
+            }
+        }
         function watchLocation() {
+            window.addEventListener('devicemotion', e => {
+                let acx = e.acceleration.x;
+                let acy = e.acceleration.y;
+                let acz = e.acceleration.z;
+                let a = Math.sqrt(acx ** 2 + acy ** 2 + acz ** 2)
+                document.querySelector('.devA').textContent = `${a} m/s2`
+            });
             watchId = navigator.geolocation.watchPosition(pos => {
                 document.getElementById('clat').textContent = 'latitude ' + pos.coords.latitude
                 document.getElementById('clong').textContent = 'longitude ' + pos.coords.longitude
@@ -41,6 +131,8 @@
                 let dist = distance(locs[0].lat, locs[0].long, locs[locs.length - 1].lat, locs[locs.length - 1].long)
                 if (dist > 0) {
                     document.querySelector('.locDetails').textContent = `Distance = ${dist} Km`
+
+                    document.querySelector('.steps').textContent = `Steps = ${dist * 39370.1 / strideLength} Km`
                 }
                 if (time > 0) {
                     document.querySelector('.speed').textContent = `Speed = ${dist / (time / (3600))} Kmph`
