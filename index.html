@@ -11,119 +11,104 @@
     <h2 class='location'>YOUR JOURNEY</h2>
     <button id='start'>Start the journey</button>
     <button id='stop'>Stop the journey</button>
+    <h1>Start Location </h1>
+    <p id='lat'></p>
+    <p id='long'></p>
+    <h2>Current Location</h2>
+    <p id='clat'></p>
+    <p id='clong'></p>
+    <h2>Parameters</h2>
     <p class='locDetails'>Distance = 0 Km</p>
     <p class='speed'>Speed = 0 Kmph</p>
     <script>
+        var time = 0;
+        var locs = [];
+        var watchId;
+        var timeInt;
+        function watchLocation() {
+            watchId = navigator.geolocation.watchPosition(pos => {
+                document.getElementById('clat').textContent = 'latitude ' + pos.coords.latitude
+                document.getElementById('clong').textContent = 'longitude ' + pos.coords.longitude
+                console.log(locs.indexOf({
+                    lat: pos.coords.latitude,
+                    long: pos.coords.longitude
+                }))
+                if (locs.indexOf({
+                    lat: pos.coords.latitude,
+                    long: pos.coords.longitude
+                }) < 0) {
+                    locs.push({
+                        lat: pos.coords.latitude,
+                        long: pos.coords.longitude
+                    })
+                }
+                let dist = distance(locs[0].lat, locs[0].long, locs[locs.length - 1].lat, locs[locs.length - 1].long)
+                if (dist > 0) {
+                    document.querySelector('.locDetails').textContent = `Distance = ${dist} Km`
+                }
+                if (time > 0) {
+                    document.querySelector('.speed').textContent = `Distance = ${dist / (time / (3600))} Km`
+                }
 
-        var lat1, long1, lat2, long2, speed;
-        let GlobalDist = 0;
-        let distance;
-        let loc;
-        var locDetails = document.querySelector('.locDetails');
-        var speed = document.querySelector('.speed');
-        const watchPosition = () => {
-            loc = navigator.geolocation.watchPosition(pos => {
-                speed = pos.coords.speed;
-                speed = speed ? speed : 0
-                if (!lat1) {
-                    lat1 = pos.coords.latitude;
-                    long1 = pos.coords.longitude;
+            }, err => {
+                console.log('err', err)
+            }, { maximumAge: 300000, timeout: 5000, enableHighAccuracy: true });
+        }
+        function distance(lat1, lon1, lat2, lon2,) {
+            if ((lat1 == lat2) && (lon1 == lon2)) {
+                return 0;
+            }
+            else {
+                var radlat1 = Math.PI * lat1 / 180;
+                var radlat2 = Math.PI * lat2 / 180;
+                var theta = lon1 - lon2;
+                var radtheta = Math.PI * theta / 180;
+                var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+                if (dist > 1) {
+                    dist = 1;
                 }
-                else {
-                    lat2 = pos.coords.latitude;
-                    long2 = pos.coords.longitude;
-                }
-                if (!lat2) {
-                    distance = 0;
-                }
-                else {
-                    if (lat1 == lat2 && long1 && long2) {
-                        distance = 0
-                    }
-                    else {
-                        distance = calculateDistance(lat1, long1, lat2, long2);
-                    }
-                    lat1 = lat2;
-                    long1 = long2;
-                }
-                GlobalDist += distance;
-                locDetails.textContent = `Distance = ${GlobalDist} km`
-                speed.textContent = `Speed = ${speed} kmph`
+                dist = Math.acos(dist);
+                dist = dist * 180 / Math.PI;
+                dist = dist * 60 * 1.1515;
+                dist = dist * 1.609344
 
-            }, (err) => { console.log(err) },
-                {
-                    enableHighAccuracy: false,
-                    timeout: 5000,
-                    maximumAge: Infinity
-                })
+                return dist;
+            }
         }
 
-        const getPosition = () => {
+        function getLocation() {
             return new Promise((res, rej) => {
                 navigator.geolocation.getCurrentPosition(pos => {
+                    document.getElementById('lat').textContent = 'latitude ' + pos.coords.latitude
+                    document.getElementById('long').textContent = 'longitude ' + pos.coords.longitude
+                    locs.push({
+                        lat: pos.coords.latitude,
+                        long: pos.coords.longitude
+                    })
                     res(pos)
+                }, err => {
+                    rej(err)
                 })
+
             })
         }
-        function startJourney() {
-
-            let runInt = setInterval(() => {
-                getPosition().then(pos => {
-                    let varSpeed = pos.coords.speed ? pos.coords.speed : 0
-                    if (!lat1) {
-                        lat1 = pos.coords.latitude;
-                        long1 = pos.coords.longitude
-
-                    }
-                    else {
-                        lat2 = pos.coords.latitude;
-                        long2 = pos.coords.longitude
-                    }
-                    if (!lat2) {
-                        distance = 0;
-                    }
-                    else {
-                        if (lat1 == lat2 && long1 == long2) {
-                            distance = 0
-                        }
-                        else {
-                            distance = calculateDistance(lat1, long1, lat2, long2);
-                        }
-                        lat1 = lat2;
-                        long1 = long2;
-                    }
-                    GlobalDist += distance;
-                    locDetails.textContent = `Distance = ${GlobalDist} km`
-                    speed.textContent = `Speed = ${varSpeed} kmph`
-
-                })
-
-            }, 5000)
-        }
-
-        function degRadConversion(deg) {
-            return deg * (Math.PI / 180)
-        }
-        function calculateDistance(lat1, long1, lat2, long2) {
-            let R = 6371;
-            let dLat = degRadConversion(lat2 - lat1)
-            let dLong = degRadConversion(long2 - long1)
-            let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(degRadConversion(lat1)) * Math.cos(degRadConversion(lat2)) *
-                Math.sin(dLong / 2) * Math.sin(dLong / 2);
-            let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            let d = R * c;
-            return d;
-        }
-
         document.getElementById('start').addEventListener('click', () => {
-            startJourney();
+            document.getElementById('lat').textContent = 'WAITING.....'
+            document.getElementById('long').textContent = 'WAITING.....'
+            getLocation()
+                .then(pos => {
+                    watchLocation();
+                    timeInt = setInterval(() => {
+                        time += 1;
+                    }, 1000)
+                })
+                .catch(err => {
+                    console.log(err)
+                });
         })
         document.getElementById('stop').addEventListener('click', () => {
-            clearInterval(runInt)
+            navigator.geolocation.clearWatch(watchId);
         })
-
-
 
 
     </script>
