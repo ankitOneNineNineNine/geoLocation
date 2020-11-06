@@ -11,8 +11,8 @@
     <h2 class='location'>YOUR JOURNEY</h2>
     <button id='start'>Start the journey</button>
     <button id='stop'>Stop the journey</button>
-    <p class='locDetails'></p>
-    <p class='speed'></p>
+    <p class='locDetails'>Distance = 0 Km</p>
+    <p class='speed'>Speed = 0 Kmph</p>
     <script>
 
         var lat1, long1, lat2, long2, speed;
@@ -58,7 +58,48 @@
                 })
         }
 
+        const getPosition = () => {
+            return new Promise((res, rej) => {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    res(pos)
+                })
+            })
+        }
+        function startJourney() {
 
+            let runInt = setInterval(() => {
+                getPosition().then(pos => {
+                    let varSpeed = pos.coords.speed ? pos.coords.speed : 0
+                    if (!lat1) {
+                        lat1 = pos.coords.latitude;
+                        long1 = pos.coords.longitude
+
+                    }
+                    else {
+                        lat2 = pos.coords.latitude;
+                        long2 = pos.coords.longitude
+                    }
+                    if (!lat2) {
+                        distance = 0;
+                    }
+                    else {
+                        if (lat1 == lat2 && long1 == long2) {
+                            distance = 0
+                        }
+                        else {
+                            distance = calculateDistance(lat1, long1, lat2, long2);
+                        }
+                        lat1 = lat2;
+                        long1 = long2;
+                    }
+                    GlobalDist += distance;
+                    locDetails.textContent = `Distance = ${GlobalDist} km`
+                    speed.textContent = `Speed = ${varSpeed} kmph`
+
+                })
+
+            }, 8000)
+        }
 
         function degRadConversion(deg) {
             return deg * (Math.PI / 180)
@@ -76,10 +117,10 @@
         }
 
         document.getElementById('start').addEventListener('click', () => {
-            watchPosition();
+            startJourney();
         })
         document.getElementById('stop').addEventListener('click', () => {
-            navigator.geolocation.clearWatch(loc);
+            clearInterval(runInt)
         })
 
 
