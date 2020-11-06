@@ -138,7 +138,7 @@
                 if (dist > 0) {
                     document.querySelector('.locDetails').textContent = `Distance = ${dist} Km`
                     if (goAhead)
-                        document.querySelector('.steps').textContent = `Steps = ${dist * 39370.1 / strideLength} Km`
+                        document.querySelector('.steps').textContent = `Steps = ${dist * 39370.1 / strideLength}`
                     else {
                         document.querySelector('.steps').textContent = `You have to move to show steps`
                     }
