@@ -8,9 +8,12 @@
 </head>
 
 <body>
-    <h2 class='location'>GEO LOCATION</h2>
+    <h2 class='location'>YOUR JOURNEY</h2>
+    <button id='start'>Start the journey</button>
+    <button id='stop'>Stop the journey</button>
     <p class='locDetails'></p>
     <script>
+
         var lat1, long1, lat2, long2, speed;
         let GlobalDist = 0;
         var locDetails = document.querySelector('.locDetails');
@@ -49,12 +52,15 @@
             return d;
         }
         function start() {
-            let pr2 = getLocation().then(pos => {
+
+            document.getElementById('stop').onclick = () => {
+                return;
+            }
+
+            getLocation().then(pos => {
                 lat2 = pos[0];
                 long2 = pos[1];
                 speed = pos[2]
-            }).catch(console.log)
-            Promise.all([pr1, pr2]).then(_ => {
                 let distance = calculateDistance(lat1, long1, lat2, long2);
                 GlobalDist += distance;
                 locDetails.textContent = `Distance = ${GlobalDist} km`
@@ -62,21 +68,23 @@
                 if (speed) {
                     locDetails.textContent = `Speed = ${speed} kmph`
                 }
-                let1 = lat2;
+                lat1 = lat2;
                 long1 = long2;
-            })
-            console.log(lat1, long1, lat2, long2)
+                start();
+            }).catch(console.log)
+
+
+
         }
         let pr1 = getLocation().then(pos => {
             lat1 = pos[0];
             long1 = pos[1];
-
-
+            document.getElementById('start').addEventListener('click', () => {
+                start()
+            })
         }).catch(console.log)
-        setInterval(() => {
-            start();
 
-        }, 50)
+
     </script>
 </body>
 
