@@ -12,13 +12,14 @@
     <p class='locDetails'></p>
     <script>
         var lat1, long1, lat2, long2, speed;
+        let GlobalDist = 0;
         var locDetails = document.querySelector('.locDetails');
         const getLocation = () => {
             return new Promise((resolve, reject) => {
                 const onSuccess = (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
-                    pos = [lat, lng];
+                    pos = [lat, lng, speed];
 
                     resolve(pos)
                 }
@@ -51,13 +52,12 @@
             let pr2 = getLocation().then(pos => {
                 lat2 = pos[0];
                 long2 = pos[1];
-
-                console.log(lat1, long1, lat2, long2)
+                speed = pos[2]
             }).catch(console.log)
             Promise.all([pr1, pr2]).then(_ => {
                 let distance = calculateDistance(lat1, long1, lat2, long2);
-
-                locDetails.textContent = `Distance = ${distance} km`
+                GlobalDist += distance;
+                locDetails.textContent = `Distance = ${GlobalDist} km`
 
                 if (speed) {
                     locDetails.textContent = `Speed = ${speed} kmph`
