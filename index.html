@@ -67,6 +67,7 @@
         let locs = [];
         let watchId;
         let timeInt;
+        let goAhead = false;
 
         heightFeet.onchange = () => {
             Feet = heightFeet.value
@@ -114,7 +115,12 @@
                 let acy = e.acceleration.y;
                 let acz = e.acceleration.z;
                 let a = Math.sqrt(acx ** 2 + acy ** 2 + acz ** 2)
-                document.querySelector('.devA').textContent = `${a} m/s2`
+                if (a > 1.8) {
+                    goAhead = true;
+                }
+                else {
+                    goAhead = false;
+                }
             });
             watchId = navigator.geolocation.watchPosition(pos => {
                 document.getElementById('clat').textContent = 'latitude ' + pos.coords.latitude
@@ -131,8 +137,11 @@
                 let dist = distance(locs[0].lat, locs[0].long, locs[locs.length - 1].lat, locs[locs.length - 1].long)
                 if (dist > 0) {
                     document.querySelector('.locDetails').textContent = `Distance = ${dist} Km`
-
-                    document.querySelector('.steps').textContent = `Steps = ${dist * 39370.1 / strideLength} Km`
+                    if (goAhead)
+                        document.querySelector('.steps').textContent = `Steps = ${dist * 39370.1 / strideLength} Km`
+                    else {
+                        document.querySelector('.steps').textContent = `You have to move to show steps`
+                    }
                 }
                 if (time > 0) {
                     document.querySelector('.speed').textContent = `Speed = ${dist / (time / (3600))} Kmph`
