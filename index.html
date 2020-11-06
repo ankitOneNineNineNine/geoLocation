@@ -48,16 +48,11 @@
             return d;
         }
         function start() {
-            let pr1 = getLocation().then(pos => {
-                lat1 = pos[0];
-                long1 = pos[1];
-
-
-            }).catch(console.log)
             let pr2 = getLocation().then(pos => {
                 lat2 = pos[0];
                 long2 = pos[1];
 
+                console.log(lat1, long1, lat2, long2)
             }).catch(console.log)
             Promise.all([pr1, pr2]).then(_ => {
                 let distance = calculateDistance(lat1, long1, lat2, long2);
@@ -67,10 +62,21 @@
                 if (speed) {
                     locDetails.textContent = `Speed = ${speed} kmph`
                 }
+                let1 = lat2;
+                long1 = long2;
             })
-
+            console.log(lat1, long1, lat2, long2)
         }
-        start();
+        let pr1 = getLocation().then(pos => {
+            lat1 = pos[0];
+            long1 = pos[1];
+
+
+        }).catch(console.log)
+        setInterval(() => {
+            start();
+
+        }, 50)
     </script>
 </body>
 
