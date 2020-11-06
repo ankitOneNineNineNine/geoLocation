@@ -27,11 +27,10 @@
                 }
                 else {
                     lat2 = pos.coords.latitude;
-                    long2 = pos.coords.long;
+                    long2 = pos.coords.longitude;
                 }
                 if (!lat2) {
                     distance = 0;
-
                 }
                 else {
                     distance = calculateDistance(lat1, long1, lat2, long2);
