@@ -16,25 +16,57 @@
 
         var lat1, long1, lat2, long2, speed;
         let GlobalDist = 0;
+        let distance;
+        let loc;
         var locDetails = document.querySelector('.locDetails');
-        const getLocation = () => {
-            return new Promise((resolve, reject) => {
-                const onSuccess = (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    pos = [lat, lng, speed];
-
-                    resolve(pos)
+        const watchPosition = () => {
+            loc = navigator.geolocation.watchPosition(pos => {
+                if (!lat1) {
+                    lat1 = pos.coords.latitude;
+                    long1 = pos.coords.long;
                 }
-
-                const onError = () => {
-                    console.log('Can\'t get location info');
-                    reject();
+                else {
+                    lat2 = pos.coords.latitude;
+                    long2 = pos.coords.long;
                 }
+                if (!lat2) {
+                    distance = 0;
 
-                navigator.geolocation.getCurrentPosition(onSuccess, onError);
-            })
+                }
+                else {
+                    distance = calculateDistance(lat1, long1, lat2, long2);
+                    lat1 = lat2;
+                    long1 = long2;
+                }
+                GlobalDist += distance;
+                locDetails.textContent = `Distance = ${GlobalDist} km`
+
+
+            }, (err) => { console.log(err) },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 1000,
+                    maximumAge: 0
+                })
         }
+        // const getLocation = () => {
+        //     return new Promise((resolve, reject) => {
+        //         const onSuccess = (position) => {
+        //             const lat = position.coords.latitude;
+        //             const lng = position.coords.longitude;
+        //             pos = [lat, lng, speed];
+
+        //             resolve(pos)
+        //         }
+
+        //         const onError = () => {
+        //             console.log('Can\'t get location info');
+        //             reject();
+        //         }
+
+        //         navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        //     })
+        // }
 
 
         function degRadConversion(deg) {
@@ -51,38 +83,15 @@
             let d = R * c;
             return d;
         }
-        function start() {
 
-            document.getElementById('stop').onclick = () => {
-                return;
-            }
-
-            getLocation().then(pos => {
-                lat2 = pos[0];
-                long2 = pos[1];
-                speed = pos[2]
-                let distance = calculateDistance(lat1, long1, lat2, long2);
-                GlobalDist += distance;
-                locDetails.textContent = `Distance = ${GlobalDist} km`
-
-                if (speed) {
-                    locDetails.textContent = `Speed = ${speed} kmph`
-                }
-                lat1 = lat2;
-                long1 = long2;
-                start();
-            }).catch(console.log)
+        document.getElementById('start').addEventListener('click', () => {
+            watchPosition();
+        })
+        document.getElementById('stop').addEventListener('click', () => {
+            navigator.geolocation.clearWatch(loc);
+        })
 
 
-
-        }
-        let pr1 = getLocation().then(pos => {
-            lat1 = pos[0];
-            long1 = pos[1];
-            document.getElementById('start').addEventListener('click', () => {
-                start()
-            })
-        }).catch(console.log)
 
 
     </script>
