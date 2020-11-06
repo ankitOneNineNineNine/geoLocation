@@ -29,10 +29,6 @@
             watchId = navigator.geolocation.watchPosition(pos => {
                 document.getElementById('clat').textContent = 'latitude ' + pos.coords.latitude
                 document.getElementById('clong').textContent = 'longitude ' + pos.coords.longitude
-                console.log(locs.indexOf({
-                    lat: pos.coords.latitude,
-                    long: pos.coords.longitude
-                }))
                 if (locs.indexOf({
                     lat: pos.coords.latitude,
                     long: pos.coords.longitude
@@ -47,7 +43,7 @@
                     document.querySelector('.locDetails').textContent = `Distance = ${dist} Km`
                 }
                 if (time > 0) {
-                    document.querySelector('.speed').textContent = `Distance = ${dist / (time / (3600))} Kmph`
+                    document.querySelector('.speed').textContent = `Speed = ${dist / (time / (3600))} Kmph`
                 }
 
             }, err => {
@@ -108,6 +104,7 @@
         })
         document.getElementById('stop').addEventListener('click', () => {
             navigator.geolocation.clearWatch(watchId);
+            clearInterval(timeInt)
         })
 
 
