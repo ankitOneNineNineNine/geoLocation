@@ -12,6 +12,7 @@
     <button id='start'>Start the journey</button>
     <button id='stop'>Stop the journey</button>
     <p class='locDetails'></p>
+    <p class='speed'></p>
     <script>
 
         var lat1, long1, lat2, long2, speed;
@@ -19,11 +20,14 @@
         let distance;
         let loc;
         var locDetails = document.querySelector('.locDetails');
+        var speed = document.querySelector('.speed');
         const watchPosition = () => {
             loc = navigator.geolocation.watchPosition(pos => {
+                speed = pos.coords.speed;
+                speed = speed ? speed : 0
                 if (!lat1) {
                     lat1 = pos.coords.latitude;
-                    long1 = pos.coords.long;
+                    long1 = pos.coords.longitude;
                 }
                 else {
                     lat2 = pos.coords.latitude;
@@ -33,39 +37,27 @@
                     distance = 0;
                 }
                 else {
-                    distance = calculateDistance(lat1, long1, lat2, long2);
+                    if (lat1 == lat2 && long1 && long2) {
+                        distance = 0
+                    }
+                    else {
+                        distance = calculateDistance(lat1, long1, lat2, long2);
+                    }
                     lat1 = lat2;
                     long1 = long2;
                 }
                 GlobalDist += distance;
                 locDetails.textContent = `Distance = ${GlobalDist} km`
-
+                speed.textContent = `Speed = ${speed} kmph`
 
             }, (err) => { console.log(err) },
                 {
                     enableHighAccuracy: false,
-                    timeout: 1000,
+                    timeout: 5000,
                     maximumAge: 0
                 })
         }
-        // const getLocation = () => {
-        //     return new Promise((resolve, reject) => {
-        //         const onSuccess = (position) => {
-        //             const lat = position.coords.latitude;
-        //             const lng = position.coords.longitude;
-        //             pos = [lat, lng, speed];
 
-        //             resolve(pos)
-        //         }
-
-        //         const onError = () => {
-        //             console.log('Can\'t get location info');
-        //             reject();
-        //         }
-
-        //         navigator.geolocation.getCurrentPosition(onSuccess, onError);
-        //     })
-        // }
 
 
         function degRadConversion(deg) {
