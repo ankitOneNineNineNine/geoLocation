@@ -151,7 +151,7 @@
                     document.querySelector('.steps').textContent = `Steps = ${steps}`
                 }
                 if (time > 0) {
-                    document.querySelector('.speed').textContent = `Speed = ${(dist / (time / (3600))).toFixed(2)} Kmph`
+                    document.querySelector('.speed').textContent = `Speed = ${(dist.toFixed(2) / (time / (3600))).toFixed(2)} Kmph`
                 }
 
             }, err => {
