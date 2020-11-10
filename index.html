@@ -55,10 +55,10 @@
 
 
 
-        <!-- 
+
         <div id='test'>
 
-        </div> -->
+        </div>
     </div>
     <script>
         let gender = document.querySelectorAll('input[name="Gender"]');
@@ -157,7 +157,7 @@
                         p.textContent = dist
                         document.getElementById('test').appendChild(p)
 
-                        steps = Math.round(globalDist.toFixed(2) * 39370.1 / (strideLength / 2))
+                        steps = Math.round(globalDist.toFixed(2) * 39370.1 / (strideLength * .5))
 
                         document.querySelector('.steps').textContent = `Steps = ${steps}`
 
