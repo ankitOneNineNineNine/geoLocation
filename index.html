@@ -55,10 +55,10 @@
 
 
 
-
+        <!-- 
         <div id='test'>
 
-        </div>
+        </div> -->
     </div>
     <script>
         let gender = document.querySelectorAll('input[name="Gender"]');
@@ -159,10 +159,10 @@
                         document.querySelector('.locDetails').textContent = `Distance = ${globalDist.toFixed(2)} Km`
 
                     }
-                    let p = document.createElement('p')
-                    p.textContent = globalDist
-                    document.getElementById('test').appendChild(p)
-                    steps = Math.round(globalDist * 39370.1 / (strideLength / 2))
+                    // let p = document.createElement('p')
+                    // p.textContent = globalDist
+                    // document.getElementById('test').appendChild(p)
+                    // steps = Math.round(globalDist * 39370.1 / (strideLength / 2))
 
 
                     document.querySelector('.steps').textContent = `Steps = ${steps}`
