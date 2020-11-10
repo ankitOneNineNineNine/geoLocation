@@ -154,7 +154,7 @@
                         globalDist += dist
                         document.querySelector('.locDetails').textContent = `Distance = ${globalDist.toFixed(2)} Km`
 
-                        steps = Math.round(globalDist * 39370.1 / (strideLength / 2))
+                        steps = Math.round(globalDist.toFixed(2) * 39370.1 / (strideLength / 2))
 
                         document.querySelector('.steps').textContent = `Steps = ${steps}`
 
