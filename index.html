@@ -52,6 +52,13 @@
         <p class='speed'>Speed = 0 Kmph</p>
         <p class='steps'>Step = 0</p>
         <p class='devA'></p>
+
+
+
+        <!-- 
+        <div id='test'>
+
+        </div> -->
     </div>
     <script>
         let gender = document.querySelectorAll('input[name="Gender"]');
@@ -125,15 +132,19 @@
             watchId = navigator.geolocation.watchPosition(pos => {
                 document.getElementById('clat').textContent = 'latitude ' + pos.coords.latitude
                 document.getElementById('clong').textContent = 'longitude ' + pos.coords.longitude
-                if (locs.indexOf({
+
+                locs.push({
                     lat: pos.coords.latitude,
                     long: pos.coords.longitude
-                }) < 0) {
-                    locs.push({
-                        lat: pos.coords.latitude,
-                        long: pos.coords.longitude
-                    })
-                }
+                })
+
+                // locs.map(loc => {
+                //     let p = document.createElement('p')
+                //     p.textContent = 'lat :' + pos.coords.latitude
+                //     document.getElementById('test').appendChild(p)
+                //     p.textContent = 'long :' + pos.coords.longitude
+                //     document.getElementById('test').appendChild(p)
+                // })
                 let dist = distance(locs[0].lat, locs[0].long, locs[locs.length - 1].lat, locs[locs.length - 1].long)
                 if (dist > 0) {
                     document.querySelector('.locDetails').textContent = `Distance = ${dist.toFixed(2)} Km`
