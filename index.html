@@ -76,6 +76,7 @@
         let timeInt;
         let goAhead = false;
         let steps = 0;
+        let globalDist = 0;
         heightFeet.onchange = () => {
             Feet = heightFeet.value
         }
@@ -145,24 +146,22 @@
                 //     p.textContent = 'long :' + pos.coords.longitude
                 //     document.getElementById('test').appendChild(p)
                 // })
-                let dist = distance(locs[0].lat, locs[0].long, locs[locs.length - 1].lat, locs[locs.length - 1].long)
-                if (dist > 0) {
-                    document.querySelector('.locDetails').textContent = `Distance = ${dist.toFixed(2)} Km`
-                    let newstepDist;
-                    if (goAhead)
-                        if (locs.length > 1) {
-                            newstepDist = distance(locs[locs.length - 2].lat, locs[locs.length - 2].long, locs[locs.length - 1].lat, locs[locs.length - 1].long)
-                            newstepDist = newstepDist.toFixed(2)
-                        }
-                        else newstepDist = 0;
-                    else {
-                        newstepDist = 0;
+                let dist = 0;
+                if (goAhead) {
+
+                    if (locs.length > 1) {
+                        dist = distance(locs[locs.length - 2].lat, locs[locs.length - 2].long, locs[locs.length - 1].lat, locs[locs.length - 1].long)
+                        globalDist += dist
+                        document.querySelector('.locDetails').textContent = `Distance = ${globalDist.toFixed(2)} Km`
+
                     }
-                    steps += Math.round(newstepDist * 39370.1 * 2 / (strideLength))
+
+                    steps += Math.round(dist * 39370.1 * 2 / (strideLength))
                     document.querySelector('.steps').textContent = `Steps = ${steps}`
-                }
-                if (time > 0) {
-                    document.querySelector('.speed').textContent = `Speed = ${(dist.toFixed(2) / (time / (3600))).toFixed(2)} Kmph`
+
+                    if (time > 0) {
+                        document.querySelector('.speed').textContent = `Speed = ${(globalDist.toFixed(2) / (time / (3600))).toFixed(2)} Kmph`
+                    }
                 }
 
             }, err => {
