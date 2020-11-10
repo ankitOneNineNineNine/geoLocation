@@ -120,18 +120,7 @@
             }
         }
         function watchLocation() {
-            window.addEventListener('devicemotion', e => {
-                let acx = e.acceleration.x;
-                let acy = e.acceleration.y;
-                let acz = e.acceleration.z;
-                let a = Math.sqrt(acx ** 2 + acy ** 2 + acz ** 2)
-                if (a > 1.8) {
-                    goAhead = true;
-                }
-                else {
-                    goAhead = false;
-                }
-            });
+
             watchId = navigator.geolocation.watchPosition(pos => {
 
                 document.getElementById('clat').textContent = 'latitude ' + pos.coords.latitude
@@ -150,34 +139,34 @@
                 //     document.getElementById('test').appendChild(p)
                 // })
                 let dist = 0;
-                if (goAhead) {
-
-                    if (locs.length < 2) {
-                        globalDist = 0;
-                    }
-                    else {
-                        dist = distance(locs[locs.length - 2].lat, locs[locs.length - 2].long, locs[locs.length - 1].lat, locs[locs.length - 1].long)
-                        globalDist += dist
-                        // let p = document.createElement('p')
-                        // p.textContent = dist
-                        // document.getElementById('test').appendChild(p)
-                    }
-
-                    steps = Math.round(globalDist.toFixed(4) * 39370.1 / (strideLength * .5))
 
 
-                    document.querySelector('.locDetails').textContent = `Distance = ${globalDist.toFixed(4)} Km`
-                    document.querySelector('.steps').textContent = `Steps = ${steps}`
-
-                    if (time > 0) {
-                        document.querySelector('.speed').textContent = `Speed = ${(globalDist.toFixed(4) / (time / (3600))).toFixed(4)} Kmph`
-                    }
-                    // let p = document.createElement('p')
-                    // p.textContent = globalDist
-                    // document.getElementById('test').appendChild(p)
-
-
+                if (locs.length < 2) {
+                    globalDist = 0;
                 }
+                else {
+                    dist = distance(locs[locs.length - 2].lat, locs[locs.length - 2].long, locs[locs.length - 1].lat, locs[locs.length - 1].long)
+                    globalDist += dist
+                    // let p = document.createElement('p')
+                    // p.textContent = dist
+                    // document.getElementById('test').appendChild(p)
+                }
+
+                steps = Math.round(globalDist * 3280.84 / (strideLength / 12))
+
+
+                document.querySelector('.locDetails').textContent = `Distance = ${globalDist.toFixed(4)} Km`
+                document.querySelector('.steps').textContent = `Steps = ${steps}`
+
+                if (time > 0) {
+                    document.querySelector('.speed').textContent = `Speed = ${(globalDist.toFixed(4) / (time / (3600))).toFixed(4)} Kmph`
+                }
+                // let p = document.createElement('p')
+                // p.textContent = globalDist
+                // document.getElementById('test').appendChild(p)
+
+
+
 
             }, err => {
                 console.log('err', err)
