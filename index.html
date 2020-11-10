@@ -156,7 +156,8 @@
 
                     }
 
-                    steps += Math.round(dist * 39370.1 * 2 / (strideLength))
+                    steps = Math.round(globalDist * 39370.1 * 2 / (strideLength))
+
                     document.querySelector('.steps').textContent = `Steps = ${steps}`
 
                     if (time > 0) {
