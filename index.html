@@ -150,8 +150,10 @@
 
 
                     dist = distance(lat1, long1, lat2, long2)
-                    globalDist += dist
-                    steps = Math.round(globalDist.toFixed(4) * 3280.84 / (strideLength * .5))
+                    if (dist < 0.05) {
+                        globalDist += dist
+                        steps = Math.round(globalDist.toFixed(4) * 3280.84 / (strideLength * .5))
+                    }
 
                     // let p = document.createElement('p')
                     // p.textContent = dist
